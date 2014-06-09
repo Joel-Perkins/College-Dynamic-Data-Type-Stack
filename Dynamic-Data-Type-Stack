@@ -1,0 +1,354 @@
+--Made by: Joel Perkins
+--Grading Option A
+--Used genericArray as reference.
+
+with ada.text_io, ada.integer_text_IO;  
+use ada.text_io, ada.integer_text_IO;
+with genericArray; --generic array package.
+with IO_Prompt;
+with Unchecked_Conversion;
+use IO_Prompt;
+
+procedure RadioTelescope is
+
+type month_name is (January, February, March, April, May, June,
+	       July, August, September, October, November, December);
+type date is 
+    record
+	day: integer range 1..31;  
+      month: month_name;  
+      year: integer;
+    end record;
+
+type StackInfoType is
+    record
+        numMax: Integer := 1;	--Max amount in array to be found at runtime.
+        numTop: Integer := 0;	--Top of current Stack
+        test: Boolean := False;  --Test for successful operation
+    end record;
+
+
+--------------------------------
+--I/O for custom types.
+--------------------------------
+package month_name_io is new ada.text_io.enumeration_io(month_name);
+use month_name_io;
+----------------------------------------------
+--Generics to be used
+----------------------------------------------
+package MyIntArray is new genericArray(Integer, Integer);
+use MyIntArray;
+
+package MyCharArray is new genericArray(Integer, Character);
+use MyCharArray;
+
+package MyDateArray is new genericArray(Integer, Date);
+use MyDateArray;
+
+-------------------------------------------------
+--Variable declorations
+-------------------------------------------------
+getInt: Integer;
+getChar: Character;
+getDate: Date;
+
+Name: String (1..255);
+Length: Integer;
+
+numCount: Integer := 0;
+
+caseChar: Character;
+
+StackInfo : StackInfoType;
+
+----------------------------------------
+--subprograms
+----------------------------------------
+function IntegerToCharacter is new unchecked_Conversion(integer, Character);
+function characterToInteger is new Unchecked_Conversion(Character, Integer);
+
+procedure Push (Item: in Integer; Stack: in out MyIntArray.userDefinedArray; StackInfo: in out StackInfoType) is
+begin
+    if (StackInfo.numTop < StackInfo.NumMax) then
+        StackInfo.numTop := StackInfo.numTop + 1;
+        Stack (StackInfo.numTop) := item;
+    else
+        StackInfo.Test := True;
+        put("Overflow");
+    end if;
+end Push;
+
+procedure Pop (Item: out Integer; Stack: in out MyIntArray.userDefinedArray; StackInfo: in out StackInfoType) is
+begin
+    if (StackInfo.numTop > 0) then
+        Item := Stack (StackInfo.numTop);
+        Stackinfo.numTop := StackInfo.numTop - 1;
+    else
+        put("Underflow");
+        new_line;
+        
+    end if;
+end Pop;
+
+procedure Push (Item: in Character; Stack: in out MyCharArray.userDefinedArray; StackInfo: in out StackInfoType) is
+begin
+    if (StackInfo.numTop < StackInfo.NumMax) then
+       Stackinfo.numTop := StackInfo.numTop + 1;
+       Stack (StackInfo.numTop) := item;
+    else
+        StackInfo.Test := True;
+        put("Overflow");
+        new_line;
+        
+    end if;
+end Push;
+
+procedure Pop (Item: out Character; Stack: in out MyCharArray.userDefinedArray; StackInfo: in out StackInfoType) is
+begin
+    if (StackInfo.numTop > 0) then
+        Item := Stack (StackInfo.numTop);
+        Stackinfo.numTop := StackInfo.numTop - 1;
+    else
+        put("Underflow");
+    end if;
+end Pop;
+
+procedure Push (Item: in Date; Stack: in out MyDateArray.userDefinedArray; StackInfo: in out StackInfoType) is
+begin
+    if (StackInfo.numTop < StackInfo.NumMax) then
+       Stackinfo.numTop := StackInfo.numTop + 1;
+       Stack (StackInfo.numTop) := item;
+    else
+        StackInfo.Test := True;
+        put("Overflow");
+    end if;
+end Push;
+
+procedure Pop (Item: out Date; Stack: in out MyDateArray.userDefinedArray; StackInfo: in out StackInfoType) is
+begin
+    if (StackInfo.numTop > 0) then
+        Item := Stack (StackInfo.numTop);
+        Stackinfo.numTop := StackInfo.numTop - 1;
+    else
+        put("Underflow");
+    end if;
+end Pop;
+
+procedure pushWord(s: String; pLength: integer; Stack: in out MyCharArray.userDefinedArray; StackInfo: in out StackInfoType) is
+      begin
+      for i in 1..pLength loop
+	   push(s(i), Stack ,StackInfo);
+      end loop;
+      getChar := integerToCharacter(pLength);         --Gets the String length in integer value and converts to character.
+      push(getChar, Stack, Stackinfo);                --Take the converted length in character format and inserts it into character array.
+end pushWord;
+
+procedure popWord(Stack: in out MyCharArray.userDefinedArray; StackInfo: in out StackInfoType) is
+	begin
+         pop(getChar, Stack, StackInfo);
+         Length := characterToInteger(getChar);
+         put("length of pop: ");
+         put(Length);
+         new_line;
+         put("result of pop: ");
+         for i in 1..Length loop
+	      pop(getChar, Stack, StackInfo);
+	      put(getChar);
+         end loop;
+         new_line;
+end popWord;
+
+procedure PrintDate(aDate: Date) is
+begin
+    put("mmm/dd/yyyy is "); put(aDate.Month); put("/");
+    put(aDate.Day,2); put("/"); put(aDate.Year,4);
+    new_line;
+end PrintDate;
+
+procedure gDate(aDate: in out Date) is
+begin
+    put("Enter Date mmm dd yyyy format( enter 0 for year to exit ): ");
+    get(aDate.month);
+    get(aDate.day);
+    get(aDate.year);
+    new_line;
+end gDate;      
+
+
+
+-------------------------------------------------------
+--Start of Main program
+-------------------------------------------------------
+begin
+
+loop --infinte loop that can be exited threw case statement.
+
+exit when StackInfo.Test = True;
+Prompt_for_input("Enter stack type (I for Int, C for Char, D for Date, E for exit): ", caseChar);
+Prompt_for_input("Enter stack size: ", stackinfo.numMax);
+
+case caseChar is
+
+when 'C' =>
+---------------------------------------------------------
+--D option
+---------------------------------------------------------
+declare
+charArray: MyCharArray.userDefinedArray(1..StackInfo.numMax);
+begin
+
+put("Data Set 1");
+New_line;
+
+loop
+
+Prompt_for_input("Enter (I to push, O to pop, E to exit): ", caseChar);
+New_line;
+
+case caseChar is
+
+when 'I' =>
+    Get(getChar); Get_Line(Name, Length); pushWord(Name, Length, charArray, stackinfo);
+    exit when StackInfo.Test = True;
+    
+when 'O' =>
+    put("Poping"); popWord(charArray, Stackinfo);
+
+when 'E' =>
+    While (Stackinfo.numTop /= 0) loop
+    popWord(CharArray, Stackinfo);
+    end loop;
+    exit when caseChar = 'E';
+
+when others =>
+    put("wrong input try again.");
+    new_line;
+
+end case;
+
+end loop;
+
+end;
+
+
+when 'I' =>
+--------------------------------------------------
+--B option
+--------------------------------------------------
+declare
+intArray: MyIntArray.userDefinedArray(1..StackInfo.numMax);
+begin
+
+put("Data set 2");
+New_line;
+
+loop
+
+Prompt_for_input("Enter (I to push, O to pop, E to exit): ", caseChar);
+
+case caseChar is
+
+when 'I' =>
+    loop
+        get(getInt);
+        exit when getInt = 0;
+        push(getInt, intArray, Stackinfo);
+        numCount := numCount + 1;
+    end loop;
+        push(numCount, intArray, Stackinfo);
+        numCount := 0; 
+    exit when StackInfo.Test = True;  
+
+when 'O' =>
+        pop(numCount, intArray, Stackinfo);
+    for i in 1..numCount loop
+        pop(getInt, intArray, Stackinfo);
+        put(getInt);
+        New_line;
+    end loop;
+        numCount := 0;
+
+when 'E' =>
+    While (Stackinfo.numTop /= 0) loop
+    pop(getInt, intArray, Stackinfo);
+    put(getInt);
+    end loop;
+    exit when caseChar = 'E';
+
+
+when others =>
+    put("wrong input try again.");
+    new_line;
+
+end case;
+
+end loop;
+
+end;
+
+
+when 'D' =>
+--------------------------------------------------------------
+--A option
+--------------------------------------------------------------
+declare
+dateArray: MyDateArray.userDefinedArray(1..StackInfo.numMax);
+begin
+
+put("Data set 3");
+new_line;
+
+loop
+
+Prompt_for_input("Enter (I to push, O to pop, E to exit): ", caseChar);
+
+case caseChar is
+
+when 'I' =>
+    loop
+    gDate(getDate); 
+    exit when getDate.year = 0;
+    push(getDate, DateArray, StackInfo);
+    exit when StackInfo.Test = True;
+    
+end loop;
+
+
+when 'O' =>
+    pop(getDate, DateArray, StackInfo);
+    printDate(getDate);
+
+when 'E' =>
+    While (Stackinfo.numTop /= 0) loop
+    pop(getDate, DateArray, Stackinfo);
+    printDate(getDate);
+    new_line;
+    end loop;
+    exit when caseChar = 'E';
+
+
+when others =>
+    put("wrong input try again.");
+    new_line;
+
+end case;
+
+end loop;
+
+end;
+
+---------------------------------------------
+--Exit outest loop
+---------------------------------------------
+when 'E' =>
+    exit when caseChar = 'E';
+
+when others =>
+    put("Not an input option, try again.");
+    new_line;
+
+end case;
+
+end loop;
+
+end RadioTelescope;
