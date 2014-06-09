@@ -1,0 +1,38 @@
+--Made by: Joel Perkins
+--Grading Option A
+--Used genericArray as reference.
+
+with ada.text_io, ada.integer_text_IO;  
+use ada.text_io, ada.integer_text_IO;
+
+package body IO_Prompt is
+
+procedure Prompt_for_input (message: in string; value: out integer) is
+begin
+    Ada.text_IO.Put_Line (Message);
+    Ada.text_IO.Flush;
+    Ada.Integer_Text_IO.Get (Value);
+end prompt_for_input;
+
+procedure Prompt_for_input (message: in string; value: out character) is
+begin
+    Ada.text_IO.Put_Line (Message);
+    Ada.text_IO.Flush;
+    Get (Value);
+end prompt_for_input;
+
+procedure Write_Labeled_Number (Message: in string; Value: in Integer) is
+begin
+    ada.text_IO.Put(Message);
+    ada.integer_text_IO.put(Value);
+    ada.text_IO.new_Line;
+end write_labeled_number;
+
+procedure Write_Labeled_Number (Message: in string; Value: in character) is
+begin
+    ada.text_IO.Put(Message);
+    put(Value);
+    ada.text_IO.new_Line;
+end write_labeled_number;
+
+end IO_Prompt;
